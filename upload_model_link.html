@@ -1,4 +1,3 @@
-
 <div>Teachable Machine Image Model</div>
 <button type="button" onclick="init()">Start</button>
 <div id="webcam-container"></div>
@@ -10,7 +9,7 @@
     // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
 
     // the link to your model provided by Teachable Machine export panel
-    const URL = "https://teachablemachine.withgoogle.com/models/DL30-XJPL/";
+    const URL = "https://teachablemachine.withgoogle.com/models/37zVlye-A/";
 
     let model, webcam, labelContainer, maxPredictions;
 
@@ -47,7 +46,7 @@
         window.requestAnimationFrame(loop);
     }
 
-    // run the webcam image through the 
+    // run the webcam image through the image model
     async function predict() {
         // predict can take in an image, video or canvas html element
         const prediction = await model.predict(webcam.canvas);
