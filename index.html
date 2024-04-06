@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="cam_container" id="cam">
+        <video class="video" width="400" height="200" class="video" autoplay></video>
+        <!-- <img class="shot" alt="Captured Image"> -->
+        <button class="capture" onclick="handleCapture()" id="capture">Capture</button>
+    </div>
+    <div class="loading">
+        <img class="load" src="loading.gif"></img>
+    </div>
+    <script>
+        const video = document.querySelector('.video');
+        const captureButton = document.getElementById('capture');
+        async function videoStream() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false,
+                });
+
+                // Set video source
+                video.srcObject = stream;
+
+                // Take a picture on button click
+                captureButton.addEventListener('click', async () => {
+                    // Create a Canvas
+                    // Save data
+                    cam.style.display = 'none';
+                    const canvas = document.createElement('canvas');
+                    // Set canvas width and height
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    // Draw a new image
+                    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                    // Take a shot
+                    const img = canvas.toDataURL('image/png');
+                    // Log base64 string
+                    console.log('Base64 Image:', img);
+
+                    // Send the base64 image to the API
+                    await sendImageToAPI(img);
+                    console.log('redirecting to results page');
+
+                    window.location.href = 'result.html';
+
+
+                    // Retrieve da
+                });
+            } catch (err) {
+                console.error('Error:', err);
+            }
+        }
+
+        // Run function
+        videoStream();
+    </script>
+</body>
+
+</html>
