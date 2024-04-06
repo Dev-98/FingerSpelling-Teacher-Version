@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import os
+# from cvzone import HandTrackingModule 
 import string
 # Create the directory structure
 
