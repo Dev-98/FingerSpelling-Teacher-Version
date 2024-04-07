@@ -1,21 +1,16 @@
 import cv2
 import numpy as np
 import os
-# from cvzone import HandTrackingModule 
+from cvzone import HandTrackingModule 
 import string
+
 # Create the directory structure
-
-
 os.makedirs("data/train",exist_ok=True)
 os.makedirs("data/test",exist_ok=True)
 
 for i in string.ascii_uppercase:
-    
     os.makedirs("data/train/"+i,exist_ok=True)
-
     os.makedirs("data/test/"+i,exist_ok=True)
-    
-
 
 # Train or test 
 mode = 'train'
@@ -73,20 +68,20 @@ while True:
     cv2.putText(frame, "j : "+str(count['j']), (10, 180), cv2.FONT_HERSHEY_PLAIN, 1, (50,255,255), 1)
     cv2.putText(frame, "k : "+str(count['k']), (10, 190), cv2.FONT_HERSHEY_PLAIN, 1, (0,155,255), 1)
     cv2.putText(frame, "l : "+str(count['l']), (10, 200), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,255), 1)
-    cv2.putText(frame, "m : "+str(count['m']), (10, 210), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,255), 1)
+    cv2.putText(frame, "m : "+str(count['m']), (10, 210), cv2.FONT_HERSHEY_PLAIN, 1, (0,25,255), 1)
     cv2.putText(frame, "n : "+str(count['n']), (10, 220), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,255), 1)
-    cv2.putText(frame, "o : "+str(count['o']), (10, 230), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,255), 1)
+    cv2.putText(frame, "o : "+str(count['o']), (10, 230), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,55), 1)
     cv2.putText(frame, "p : "+str(count['p']), (10, 240), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,255), 1)
-    cv2.putText(frame, "q : "+str(count['q']), (10, 250), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,255), 1)
-    cv2.putText(frame, "r : "+str(count['r']), (10, 260), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,255), 1)
+    cv2.putText(frame, "q : "+str(count['q']), (10, 250), cv2.FONT_HERSHEY_PLAIN, 1, (0,25,255), 1)
+    cv2.putText(frame, "r : "+str(count['r']), (10, 260), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,25), 1)
     cv2.putText(frame, "s : "+str(count['s']), (10, 270), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,255), 1)
-    cv2.putText(frame, "t : "+str(count['t']), (10, 280), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,255), 1)
-    cv2.putText(frame, "u : "+str(count['u']), (10, 290), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,255), 1)
-    cv2.putText(frame, "v : "+str(count['v']), (10, 300), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,255), 1)
-    cv2.putText(frame, "w : "+str(count['w']), (10, 310), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,255), 1)
-    cv2.putText(frame, "x : "+str(count['x']), (10, 320), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,255), 1)
-    cv2.putText(frame, "y : "+str(count['y']), (10, 330), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,255), 1)
-    cv2.putText(frame, "z : "+str(count['z']), (10, 340), cv2.FONT_HERSHEY_PLAIN, 1, (0,255,255), 1)
+    cv2.putText(frame, "t : "+str(count['t']), (10, 280), cv2.FONT_HERSHEY_PLAIN, 1, (33,255,255), 1)
+    cv2.putText(frame, "u : "+str(count['u']), (10, 290), cv2.FONT_HERSHEY_PLAIN, 1, (9,255,255), 1)
+    cv2.putText(frame, "v : "+str(count['v']), (10, 300), cv2.FONT_HERSHEY_PLAIN, 1, (80,255,255), 1)
+    cv2.putText(frame, "w : "+str(count['w']), (10, 310), cv2.FONT_HERSHEY_PLAIN, 1, (55,205,255), 1)
+    cv2.putText(frame, "x : "+str(count['x']), (10, 320), cv2.FONT_HERSHEY_PLAIN, 1, (0,5,255), 1)
+    cv2.putText(frame, "y : "+str(count['y']), (10, 330), cv2.FONT_HERSHEY_PLAIN, 1, (0,2,255), 1)
+    cv2.putText(frame, "z : "+str(count['z']), (10, 340), cv2.FONT_HERSHEY_PLAIN, 1, (0,0,25), 1)
     # Coordinates of the ROI
     x1 = int(0.5*frame.shape[1])
     y1 = 10
@@ -96,25 +91,26 @@ while True:
     # The increment/decrement by 1 is to compensate for the bounding box
     cv2.rectangle(frame, (220-1, 9), (620+1, 419), (255,0,0) ,1)
     # Extracting the ROI
-    roi = frame[10:410, 220:520]
+    roi = frame[0:300, 20:120]
 #    roi = cv2.resize(roi, (64, 64))
     
     cv2.imshow("Frame", frame)
-    gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+    cv2.imshow("ROI",roi)
+    # gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
     
-    blur = cv2.GaussianBlur(gray,(5,5),2)
-    # #blur = cv2.bilateralFilter(roi,9,75,75)
+    # blur = cv2.GaussianBlur(gray,(5,5),2)
+    # # #blur = cv2.bilateralFilter(roi,9,75,75)
     
-    th3 = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,2)
-    ret, test_image = cv2.threshold(th3, minValue, 255, cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
-    #time.sleep(5)
-    #cv2.imwrite("/home/rc/Downloads/soe/im1.jpg", roi)
-    #test_image = func("/home/rc/Downloads/soe/im1.jpg")
+    # th3 = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,11,2)
+    # ret, test_image = cv2.threshold(th3, minValue, 255, cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+    # #time.sleep(5)
+    # #cv2.imwrite("/home/rc/Downloads/soe/im1.jpg", roi)
+    # #test_image = func("/home/rc/Downloads/soe/im1.jpg")
 
 
     
-    test_image = cv2.resize(test_image, (300,300))
-    cv2.imshow("test", test_image)
+    # test_image = cv2.resize(test_image, (300,300))
+    # cv2.imshow("test", test_image)
         
     #_, mask = cv2.threshold(mask, 200, 255, cv2.THRESH_BINARY)
     #kernel = np.ones((1, 1), np.uint8)
