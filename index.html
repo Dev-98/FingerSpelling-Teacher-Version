@@ -1,68 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Language Recognition</title>
+  <style>
+    #webcam-container {
+      position: relative;
+      width: 500px; /* Adjust webcam width */
+      height: 500px; /* Adjust webcam height */
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
 </head>
-
 <body>
-    <div class="cam_container" id="cam">
-        <video class="video" width="400" height="200" class="video" autoplay></video>
-        <!-- <img class="shot" alt="Captured Image"> -->
-        <button class="capture" onclick="handleCapture()" id="capture">Capture</button>
-    </div>
-    <div class="loading">
-        <img class="load" src="loading.gif"></img>
-    </div>
-    <script>
-        const video = document.querySelector('.video');
-        const captureButton = document.getElementById('capture');
-        async function videoStream() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: true,
-                    audio: false,
-                });
+  <div>Teachable Machine Image Model</div>
+  <button type="button" onclick="init()">Start</button>
+  <div id="webcam-container"></div>
+  <div id="label-container"></div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/handtrackjs"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+  <script>
+    const URL = "https://teachablemachine.withgoogle.com/models/37zVlye-A/";
+    let model, webcam, labelContainer, maxPredictions;
 
-                // Set video source
-                video.srcObject = stream;
+    async function init() {
+        const modelURL = URL + "model.json";
+        const metadataURL = URL + "metadata.json";
 
-                // Take a picture on button click
-                captureButton.addEventListener('click', async () => {
-                    // Create a Canvas
-                    // Save data
-                    cam.style.display = 'none';
-                    const canvas = document.createElement('canvas');
-                    // Set canvas width and height
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    // Draw a new image
-                    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-                    // Take a shot
-                    const img = canvas.toDataURL('image/png');
-                    // Log base64 string
-                    console.log('Base64 Image:', img);
+        model = await tmImage.load(modelURL, metadataURL);
+        maxPredictions = model.getTotalClasses();
 
-                    // Send the base64 image to the API
-                    await sendImageToAPI(img);
-                    console.log('redirecting to results page');
+        const flip = true;
+        webcam = new tmImage.Webcam(200, 200, flip);
+        await webcam.setup();
+        await webcam.play();
+        window.requestAnimationFrame(loop);
 
-                    window.location.href = 'result.html';
-
-
-                    // Retrieve da
-                });
-            } catch (err) {
-                console.error('Error:', err);
-            }
+        document.getElementById("webcam-container").appendChild(webcam.canvas);
+        labelContainer = document.getElementById("label-container");
+        for (let i = 0; i < maxPredictions; i++) {
+            labelContainer.appendChild(document.createElement("div"));
         }
+        
+        // Load the hand detection model
+        handTrack.load().then(model => {
+            // Start detecting hands
+            handTrack.startVideo(webcam.canvas).then(status => {
+                if (status) {
+                    // Detection loop
+                    setInterval(async () => {
+                        const predictions = await model.detect(webcam.canvas);
+                        if (predictions.length > 0) {
+                            // Clear previous drawings
+                            const canvas = document.createElement('canvas');
+                            canvas.width = webcam.canvas.width;
+                            canvas.height = webcam.canvas.height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(webcam.canvas, 0, 0);
 
-        // Run function
-        videoStream();
-    </script>
+                            // Draw hand points
+                            const landmarks = predictions[0].landmarks;
+                            landmarks.forEach(point => {
+                                ctx.beginPath();
+                                ctx.arc(point[0], point[1], 5, 0, 2 * Math.PI);
+                                ctx.fillStyle = 'red';
+                                ctx.fill();
+                                ctx.closePath();
+                            });
+
+                            // Replace webcam canvas with the one containing hand points
+                            webcam.canvas.parentNode.replaceChild(canvas, webcam.canvas);
+                        }
+                    }, 100); // Adjust the interval as needed
+                } else {
+                    console.error('Failed to start video.');
+                }
+            });
+        }).catch(err => console.error('Error loading model:', err));
+    }
+
+    async function loop() {
+        webcam.update();
+        await predict();
+        window.requestAnimationFrame(loop);
+    }
+
+    async function predict() {
+        const prediction = await model.predict(webcam.canvas);
+        for (let i = 0; i < maxPredictions; i++) {
+            const classPrediction =
+                prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+            labelContainer.childNodes[i].innerHTML = classPrediction;
+        }
+    }
+  </script>
 </body>
-
 </html>
