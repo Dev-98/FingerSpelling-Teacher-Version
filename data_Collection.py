@@ -89,9 +89,10 @@ while True:
     y2 = int(0.5*frame.shape[1])
     # Drawing the ROI
     # The increment/decrement by 1 is to compensate for the bounding box
-    cv2.rectangle(frame, (220-1, 9), (620+1, 419), (255,0,0) ,1)
+    cv2.rectangle(frame, (250-1, 29), (600+1, 409), (255,0,0) ,1)
+    
     # Extracting the ROI
-    roi = frame[0:300, 20:120]
+    roi = frame[30:410, 250:600]
 #    roi = cv2.resize(roi, (64, 64))
     
     cv2.imshow("Frame", frame)
